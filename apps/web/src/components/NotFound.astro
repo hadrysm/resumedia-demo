@@ -1,0 +1,26 @@
+---
+import type { LocaleCode } from '@resumedia-demo/shared/locales'
+import type { Tenant } from '@resumedia-demo/shared/payload-types'
+import { pagePath } from '@resumedia-demo/shared/routing'
+
+import Base from '../layouts/Base.astro'
+import { localeOptions } from '../lib/seo'
+import { ui } from '../lib/ui'
+
+type Props = { tenant: Tenant; locale: LocaleCode }
+const { tenant, locale } = Astro.props
+const t = ui[locale]
+---
+
+<Base tenant={tenant} locale={locale} title={`${t.notFoundTitle} | ${tenant.name}`} locales={localeOptions(tenant, {}, locale)} noindex>
+  <section class="container-page grid min-h-[60vh] place-items-center py-24 text-center">
+    <div>
+      <p class="text-7xl font-extrabold tracking-tight text-brand">404</p>
+      <h1 class="mt-4 text-3xl font-bold text-ink">{t.notFoundTitle}</h1>
+      <p class="mt-3 text-slate-600">{t.notFoundBody}</p>
+      <a href={pagePath(tenant, locale, 'home')} class="mt-8 inline-flex rounded-full bg-brand px-6 py-3 font-semibold text-white">
+        {t.backHome}
+      </a>
+    </div>
+  </section>
+</Base>

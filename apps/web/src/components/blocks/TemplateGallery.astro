@@ -1,0 +1,35 @@
+---
+import Img from '../Img.astro'
+import SectionHeading from './SectionHeading.astro'
+import type { BlockProps } from './types'
+
+type Props = BlockProps<'templateGallery'>
+const { block, ctx } = Astro.props
+---
+
+<section id="templates" class="bg-linear-to-b from-white via-brand/5 to-white py-20 sm:py-24">
+  <div class="container-page">
+    <SectionHeading heading={block.heading} intro={block.intro} />
+    <ul class="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        (block.templates ?? []).map((template) => (
+          <li>
+            <a href={ctx.tenant.appUrl} class="group block">
+              <div class="overflow-hidden rounded-2xl bg-white p-3 shadow-md ring-1 ring-slate-200 transition duration-300 group-hover:-translate-y-1.5 group-hover:shadow-2xl group-hover:ring-brand/40">
+                <Img
+                  media={template.image}
+                  sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+                  class="aspect-[1/1.414] w-full rounded-xl object-cover object-top"
+                />
+              </div>
+              <p class="mt-4 flex items-center justify-between font-semibold text-ink">
+                {template.name}
+                <span class="text-brand opacity-0 transition group-hover:opacity-100">→</span>
+              </p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,23 @@
+---
+import Icon from '../Icon.astro'
+import type { BlockProps } from './types'
+
+type Props = BlockProps<'cta'>
+const { block, ctx } = Astro.props
+---
+
+<section class="container-page py-12">
+  <div class="relative isolate overflow-hidden rounded-[2rem] bg-brand px-8 py-16 text-center text-white shadow-2xl shadow-brand/30 sm:px-16">
+    <div class="absolute -top-24 -right-16 -z-10 size-80 rounded-full bg-accent/60 blur-3xl" />
+    <div class="absolute -bottom-32 -left-20 -z-10 size-80 rounded-full bg-white/20 blur-3xl" />
+    <h2 class="mx-auto max-w-2xl text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">{block.heading}</h2>
+    {block.body && <p class="mx-auto mt-4 max-w-xl text-lg text-pretty text-white/85">{block.body}</p>}
+    <a
+      href={ctx.tenant.appUrl}
+      class="mt-9 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-brand shadow-lg transition hover:-translate-y-0.5"
+    >
+      {block.buttonLabel}
+      <Icon name="arrow" class="size-4" />
+    </a>
+  </div>
+</section>

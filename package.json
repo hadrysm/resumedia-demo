@@ -1,0 +1,17 @@
+{
+  "name": "resumedia-demo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter cms --filter web dev",
+    "build": "pnpm --filter cms build && pnpm --filter web build",
+    "start": "pnpm --parallel --filter cms --filter web start",
+    "test": "pnpm --filter @resumedia-demo/shared test",
+    "typecheck": "pnpm -r typecheck",
+    "seed": "pnpm --filter cms seed"
+  }
+}

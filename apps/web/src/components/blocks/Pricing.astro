@@ -1,0 +1,27 @@
+---
+import { defaultCountry, priceList } from '../../lib/prices'
+import { ui } from '../../lib/ui'
+import PricingIsland from '../PricingIsland'
+import SectionHeading from './SectionHeading.astro'
+import type { BlockProps } from './types'
+
+type Props = BlockProps<'pricing'>
+const { block, ctx } = Astro.props
+const { country, plans, periods, bestValue, features } = ui[ctx.locale]
+---
+
+<section id="pricing" class="bg-slate-50 py-20 sm:py-24">
+  <div class="container-page">
+    <SectionHeading heading={block.heading} intro={block.intro} />
+    <div class="mx-auto mt-10 max-w-5xl">
+      <PricingIsland
+        client:visible
+        locale={ctx.locale}
+        initial={priceList(defaultCountry(ctx.locale))}
+        appUrl={ctx.tenant.appUrl}
+        buttonLabel={block.buttonLabel}
+        strings={{ country, plans, periods, bestValue, features }}
+      />
+    </div>
+  </div>
+</section>

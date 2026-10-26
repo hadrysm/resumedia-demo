@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env*.local
+dist/
+.next/
+.astro/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+apps/cms/media/

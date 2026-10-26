@@ -1,0 +1,41 @@
+---
+import type { LocaleCode } from '@resumedia-demo/shared/locales'
+import type { Page, Tenant } from '@resumedia-demo/shared/payload-types'
+
+import Base from '../layouts/Base.astro'
+import type { AlternateLink, LocaleOption } from '../lib/seo'
+import { componentFor } from './blocks/registry'
+
+type Props = {
+  page: Page
+  tenant: Tenant
+  locale: LocaleCode
+  locales: LocaleOption[]
+  canonical?: string
+  alternates?: AlternateLink[]
+  livePreviewOrigin?: string
+}
+
+const { page, tenant, locale, locales, canonical, alternates, livePreviewOrigin } = Astro.props
+const ctx = { tenant, locale }
+const title = page.meta?.title || `${page.title} | ${tenant.name}`
+---
+
+<Base
+  tenant={tenant}
+  locale={locale}
+  title={title}
+  description={page.meta?.description}
+  canonical={canonical}
+  alternates={alternates}
+  locales={locales}
+  noindex={Boolean(livePreviewOrigin)}
+  livePreviewOrigin={livePreviewOrigin}
+>
+  {
+    (page.layout ?? []).map((block) => {
+      const Component = componentFor(block)
+      return Component ? <Component block={block} ctx={ctx} /> : null
+    })
+  }
+</Base>

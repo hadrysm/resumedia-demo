@@ -1,0 +1,33 @@
+<script>
+  import { isDocumentEvent, ready } from '@payloadcms/live-preview'
+
+  // Server-side live preview: Payload posts a document event after every autosave, and the page
+  // re-renders on the server with the new draft. Swapping the root keeps scroll and avoids a reload flash.
+  const serverURL = document.body.dataset.livePreview
+  let pending: AbortController | undefined
+
+  async function refresh() {
+    pending?.abort()
+    const controller = new AbortController()
+    pending = controller
+    const res = await fetch(window.location.href, { cache: 'no-store', signal: controller.signal })
+    const next = new DOMParser().parseFromString(await res.text(), 'text/html')
+    const nextRoot = next.querySelector('[data-preview-root]')
+    const root = document.querySelector('[data-preview-root]')
+    if (controller.signal.aborted || !nextRoot || !root) return
+    const scrollY = window.scrollY
+    root.replaceWith(document.importNode(nextRoot, true))
+    document.title = next.title
+    window.scrollTo({ top: scrollY })
+  }
+
+  if (serverURL) {
+    window.addEventListener('message', (event) => {
+      if (!isDocumentEvent(event, serverURL)) return
+      refresh().catch((err: unknown) => {
+        if (!(err instanceof DOMException && err.name === 'AbortError')) console.error('Live preview refresh failed', err)
+      })
+    })
+    ready({ serverURL })
+  }
+</script>

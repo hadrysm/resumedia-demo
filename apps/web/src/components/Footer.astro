@@ -1,0 +1,21 @@
+---
+import type { LocaleCode } from '@resumedia-demo/shared/locales'
+import type { Tenant } from '@resumedia-demo/shared/payload-types'
+
+import { ui } from '../lib/ui'
+import BrandMark from './BrandMark.astro'
+
+type Props = { tenant: Tenant; locale: LocaleCode }
+const { tenant, locale } = Astro.props
+---
+
+<footer class="mt-24 bg-ink text-slate-400">
+  <div class="container-page flex flex-col gap-6 py-12 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex items-center gap-2.5">
+      <BrandMark tenant={tenant} inverted />
+    </div>
+    <p class="text-sm">
+      © {new Date().getFullYear()} Resumedia BV · {ui[locale].footer}
+    </p>
+  </div>
+</footer>

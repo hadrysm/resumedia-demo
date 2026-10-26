@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+
+/* Brand colours arrive at runtime as CSS variables from tenant.theme, so utilities reference them. */
+@theme inline {
+  --color-brand: var(--brand-primary);
+  --color-accent: var(--brand-accent);
+  --color-ink: #0f172a;
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-white font-sans text-ink;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--brand-primary) 25%, transparent);
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+}
+
+.rich h2 {
+  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+}
+.rich > :first-child {
+  @apply mt-0;
+}
+.rich p {
+  @apply my-5 text-lg leading-8 text-slate-600;
+}
+.rich ul {
+  @apply my-6 space-y-3;
+}
+.rich li {
+  @apply relative pl-8 text-lg leading-8 text-slate-700;
+}
+.rich li::before {
+  content: '';
+  @apply absolute top-3 left-1 size-3 rounded-full bg-brand/80;
+}
+.rich a {
+  @apply font-semibold text-brand underline decoration-2 underline-offset-4;
+}

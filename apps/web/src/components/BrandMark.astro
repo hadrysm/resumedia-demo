@@ -1,0 +1,18 @@
+---
+import type { Tenant } from '@resumedia-demo/shared/payload-types'
+
+type Props = { tenant: Tenant; inverted?: boolean }
+const { tenant, inverted = false } = Astro.props
+const [first, ...rest] = tenant.name.split('.')
+---
+
+<span
+  class:list={[
+    'grid size-9 place-items-center rounded-xl text-base font-extrabold shadow-sm',
+    inverted ? 'bg-white text-brand' : 'bg-brand text-white shadow-brand/30',
+  ]}
+  aria-hidden="true">{tenant.name[0]}</span
+>
+<span class:list={['text-lg font-extrabold tracking-tight', inverted ? 'text-white' : 'text-ink']}>
+  {first}{rest.length > 0 && <span class={inverted ? 'text-white/70' : 'text-brand'}>.{rest.join('.')}</span>}
+</span>

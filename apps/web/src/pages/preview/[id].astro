@@ -1,0 +1,28 @@
+---
+import { isLocaleCode } from '@resumedia-demo/shared/locales'
+
+import PageView from '../../components/PageView.astro'
+import { cmsOrigin, getPreviewPage, pageTenantId, tenantById } from '../../lib/cms'
+import { localeOptions } from '../../lib/seo'
+
+// Drafts render through the same PageView as published pages. The CMS checks the secret, the id and
+// that the locale belongs to the page's brand, and answers 401/404 for anything else.
+const headers = {
+  'Cache-Control': 'no-store',
+  'X-Robots-Tag': 'noindex',
+  'Content-Security-Policy': `frame-ancestors 'self' ${cmsOrigin}`,
+}
+for (const [name, value] of Object.entries(headers)) Astro.response.headers.set(name, value)
+
+const locale = Astro.url.searchParams.get('locale')
+const secret = Astro.url.searchParams.get('secret') ?? ''
+const page = isLocaleCode(locale) ? await getPreviewPage(Astro.params.id ?? '', locale, secret) : null
+const tenantId = page ? pageTenantId(page) : undefined
+const tenant = tenantId ? await tenantById(tenantId) : undefined
+
+if (!page || !tenant || !isLocaleCode(locale)) {
+  return new Response('Preview not available for this page and locale.', { status: 404, headers })
+}
+---
+
+<PageView page={page} tenant={tenant} locale={locale} locales={localeOptions(tenant, {}, locale)} livePreviewOrigin={cmsOrigin} />

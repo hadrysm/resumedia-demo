@@ -1,0 +1,58 @@
+---
+import { HOME_SLUG, isPrefixed, pagePath, parsePath } from '@resumedia-demo/shared/routing'
+
+import NotFound from '../components/NotFound.astro'
+import PageView from '../components/PageView.astro'
+import { getClusterPages, getLocalizedSlugs, getPublishedPage } from '../lib/cms'
+import { hreflangLinks, localeOptions } from '../lib/seo'
+
+const { tenant } = Astro.locals
+const { pathname } = Astro.url
+
+// Brandless prefixes (/api/, /preview/) skip tenant resolution; anything under them not matched by a route ends here.
+if (!tenant) return new Response(null, { status: 404 })
+
+// Multi-language brands have no unprefixed root, so the bare domain sends visitors to the default locale.
+if (pathname === '/' && isPrefixed(tenant)) {
+  return Astro.redirect(pagePath(tenant, tenant.defaultLocale, HOME_SLUG), 302)
+}
+
+const route = parsePath(tenant, pathname)
+const page = route ? await getPublishedPage(tenant, route.locale, route.slug) : null
+
+// Publishing must show up at once in the demo, so nothing is cached at the CDN.
+Astro.response.headers.set('Cache-Control', 'no-store')
+
+let view = null
+if (route && page) {
+  const [slugs, cluster] = await Promise.all([
+    getLocalizedSlugs(page.id),
+    getClusterPages(tenant, page.translationKey),
+  ])
+  const origin = Astro.url.origin
+  view = {
+    page,
+    locale: route.locale,
+    canonical: origin + pagePath(tenant, route.locale, route.slug),
+    alternates: hreflangLinks({ origin, tenant, slugs, cluster, current: Astro.url }),
+    locales: localeOptions(tenant, slugs, route.locale),
+  }
+} else {
+  Astro.response.status = 404
+}
+---
+
+{
+  view ? (
+    <PageView
+      page={view.page}
+      tenant={tenant}
+      locale={view.locale}
+      locales={view.locales}
+      canonical={view.canonical}
+      alternates={view.alternates}
+    />
+  ) : (
+    <NotFound tenant={tenant} locale={route?.locale ?? tenant.defaultLocale} />
+  )
+}

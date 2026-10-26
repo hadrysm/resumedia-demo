@@ -1,0 +1,9 @@
+---
+type Props = { heading: string; intro?: string | null }
+const { heading, intro } = Astro.props
+---
+
+<div class="mx-auto max-w-2xl text-center">
+  <h2 class="text-3xl font-extrabold tracking-tight text-balance text-ink sm:text-4xl">{heading}</h2>
+  {intro && <p class="mt-4 text-lg leading-8 text-pretty text-slate-600">{intro}</p>}
+</div>

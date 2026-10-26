@@ -1,0 +1,64 @@
+---
+import { localeLabel, type LocaleCode } from '@resumedia-demo/shared/locales'
+import type { Tenant } from '@resumedia-demo/shared/payload-types'
+import { pagePath } from '@resumedia-demo/shared/routing'
+
+import type { LocaleOption } from '../lib/seo'
+import { ui } from '../lib/ui'
+import BrandMark from './BrandMark.astro'
+
+type Props = { tenant: Tenant; locale: LocaleCode; locales: LocaleOption[] }
+const { tenant, locale, locales } = Astro.props
+const t = ui[locale]
+---
+
+<header class="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
+  <div class="container-page flex h-16 items-center justify-between gap-3">
+    <a href={pagePath(tenant, locale, 'home')} class="flex min-w-0 items-center gap-2.5" aria-label={tenant.name}>
+      <BrandMark tenant={tenant} />
+    </a>
+    <div class="flex shrink-0 items-center gap-1 sm:gap-3">
+      {
+        locales.length > 1 && (
+          <details class="group relative">
+            <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-full px-2 py-2 text-sm sm:px-3 font-medium text-slate-600 transition hover:bg-slate-100 hover:text-ink [&::-webkit-details-marker]:hidden">
+              <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z" />
+              </svg>
+              <span class="uppercase">{locale}</span>
+              <span class="sr-only">{t.language}</span>
+              <svg viewBox="0 0 20 20" class="size-3.5 transition group-open:rotate-180" fill="currentColor" aria-hidden="true">
+                <path d="M5.2 7.6a.75.75 0 0 1 1.06-.04L10 11.1l3.74-3.54a.75.75 0 1 1 1.02 1.1l-4.25 4a.75.75 0 0 1-1.02 0l-4.25-4a.75.75 0 0 1-.04-1.06z" />
+              </svg>
+            </summary>
+            <ul class="absolute right-0 mt-2 w-52 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-900/10">
+              {locales.map((option) => (
+                <li>
+                  <a
+                    href={option.href}
+                    hreflang={option.locale}
+                    aria-current={option.current ? 'page' : undefined}
+                    class:list={[
+                      'flex items-center justify-between rounded-xl px-3 py-2 text-sm transition hover:bg-slate-50',
+                      option.current ? 'font-semibold text-brand' : 'text-slate-700',
+                    ]}
+                  >
+                    {localeLabel(option.locale)}
+                    <span class="text-xs text-slate-400 uppercase">{option.locale}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )
+      }
+      <a
+        href={tenant.appUrl}
+        class="rounded-full bg-brand px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-white sm:px-4 shadow-sm shadow-brand/30 transition hover:brightness-110"
+      >
+        {t.start}
+      </a>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,10 @@
+---
+import type { BlockProps } from './types'
+
+type Props = BlockProps<'richText'>
+const { block } = Astro.props
+---
+
+<section class="container-page py-12">
+  <article class="rich mx-auto max-w-3xl" set:html={block.html ?? ''} />
+</section>

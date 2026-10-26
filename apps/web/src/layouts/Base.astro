@@ -1,0 +1,56 @@
+---
+import '../styles/global.css'
+
+import type { LocaleCode } from '@resumedia-demo/shared/locales'
+import type { Tenant } from '@resumedia-demo/shared/payload-types'
+
+import Footer from '../components/Footer.astro'
+import Header from '../components/Header.astro'
+import LivePreview from '../components/LivePreview.astro'
+import type { AlternateLink, LocaleOption } from '../lib/seo'
+
+type Props = {
+  tenant: Tenant
+  locale: LocaleCode
+  title: string
+  description?: string | null
+  canonical?: string
+  alternates?: AlternateLink[]
+  locales: LocaleOption[]
+  noindex?: boolean
+  livePreviewOrigin?: string
+}
+
+const { tenant, locale, title, description, canonical, alternates = [], locales, noindex, livePreviewOrigin } = Astro.props
+const themeVars = `--brand-primary: ${tenant.theme.primaryColor}; --brand-accent: ${tenant.theme.accentColor};`
+---
+
+<!doctype html>
+<html lang={locale} style={themeVars}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <meta name="theme-color" content={tenant.theme.primaryColor} />
+    <link
+      rel="icon"
+      href={`data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="${tenant.theme.primaryColor}"/><text x="16" y="22" font-family="sans-serif" font-size="17" font-weight="700" fill="#fff" text-anchor="middle">${tenant.name[0]}</text></svg>`,
+      )}`}
+    />
+  </head>
+  <body data-live-preview={livePreviewOrigin}>
+    <div data-preview-root class="flex min-h-screen flex-col">
+      <Header tenant={tenant} locale={locale} locales={locales} />
+      <main class="flex-1">
+        <slot />
+      </main>
+      <Footer tenant={tenant} locale={locale} />
+    </div>
+    {livePreviewOrigin && <LivePreview />}
+  </body>
+</html>
